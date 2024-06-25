@@ -24,7 +24,6 @@ export default {
       required: true,
     },
   },
-
   setup(props, context) {
     let datas = props.datas;
     let itemSize = props.itemSize;
@@ -65,28 +64,39 @@ export default {
     clickEvent(event: Event) {
       this.context.emit('clickTarget', event);
     },
-    animation() {
-      if (this.container_dom) {
-        this.animationId = requestAnimationFrame(this.animation);
-        this.container_dom.scrollBy(0, this.pixelsPerMove / this.framesPerMove);
-        if (this.isScrollBottom()) {
-          cancelAnimationFrame(this.animationId);
-          this.container_dom.scrollTo(0, 0);
-          setTimeout(() => {
-            this.animation();
-          }, 500);
+    autoScroll() {
+      const isScrollBottom = () => {
+        if (this.container_dom) {
+          if (this.container_dom.scrollHeight > this.container_dom.clientHeight) {
+            return Math.abs(this.container_dom.scrollHeight - this.container_dom.clientHeight - this.container_dom.scrollTop) < 1;
+          } else {
+            return false;
+          }
         }
       };
-    },
-    isScrollBottom() {
-      if (this.container_dom) {
-        if (this.container_dom.scrollHeight > this.container_dom.clientHeight) {
-          return Math.abs(this.container_dom.scrollHeight - this.container_dom.clientHeight - this.container_dom.scrollTop) < 1;
+      const scrollSpeed = () => {
+        if ((this.pixelsPerMove / this.framesPerMove) < 0.8) {
+          return 0.8;
         } else {
-          return false;
+          return this.pixelsPerMove / this.framesPerMove
         }
       }
-    }
+      const scroll = () => {
+        if (this.container_dom) {
+          this.animationId = requestAnimationFrame(scroll);
+          this.container_dom.scrollBy(0, scrollSpeed());
+          if (isScrollBottom()) {
+            cancelAnimationFrame(this.animationId);
+            this.container_dom.scrollTo(0, 0);
+            setTimeout(() => {
+              scroll();
+            }, 500);
+          }
+        };
+      }
+
+      scroll();
+    },
   },
 
   updated() {
@@ -100,7 +110,7 @@ export default {
       this.startIndex = 0;
       this.endIndex = this.startIndex + this.visibleCount;
       this.offsetY = this.startIndex * this.itemSize;
-      this.animation();
+      this.autoScroll();
     }
   },
 
@@ -131,7 +141,6 @@ export default {
   height: 100%;
   position: relative;
   overflow-y: auto;
-  border: 1px solid #000;
   box-sizing: border-box;
 }
 
