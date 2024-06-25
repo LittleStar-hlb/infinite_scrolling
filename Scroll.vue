@@ -24,6 +24,7 @@ export default {
       required: true,
     },
   },
+
   setup(props, context) {
     let datas = props.datas;
     let itemSize = props.itemSize;
@@ -117,6 +118,10 @@ export default {
       return `${this.datas.length * this.itemSize}px`
     }
   },
+
+  beforeUnmount() {
+    cancelAnimationFrame(this.animationId);
+  }
 };
 </script>
 
