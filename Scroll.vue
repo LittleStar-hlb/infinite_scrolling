@@ -23,10 +23,15 @@ export default {
       type: Number,
       required: true,
     },
+    preloadCount: {
+      type: Number,
+      default: 1,
+    },
   },
   setup(props, context) {
     let datas = props.datas;
     let itemSize = props.itemSize;
+    let preloadCount: number = props.preloadCount;
 
     let screenSize: number = 0;
     let visibleCount: number = 0;
@@ -43,6 +48,7 @@ export default {
     return {
       datas,
       itemSize,
+      preloadCount,
 
       screenSize,
       visibleCount,
@@ -143,7 +149,7 @@ export default {
 
     },
     visibleData() {
-      return this.datas.slice(this.startIndex, this.endIndex + this.visibleCount);
+      return this.datas.slice(this.startIndex, this.endIndex + this.preloadCount);
     },
     transaleY() {
       return `translateY(${this.offsetY}px)`;
