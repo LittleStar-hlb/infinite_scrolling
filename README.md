@@ -30,5 +30,5 @@ export default {
 
     <!-- <div v-for="(item, index) in slotProps.visibleData" :key="index">{{ index }}</div> -->
   </Scroll>
-</tamplate>
+</template>
 ```
