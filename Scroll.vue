@@ -31,14 +31,14 @@ export default {
   setup(props, context) {
     let datas = props.datas;
     let itemSize = props.itemSize;
-    let preloadCount: number = props.preloadCount;
+    let preloadCount = props.preloadCount;
 
     let screenSize: number = 0;
     let visibleCount: number = 0;
     let animationId: number = 0;
     let framesPerMove: number = 60;
     let pixelsPerMove: number = itemSize;
-    let delayTime: number = 0;
+    let delayTimeId: number = 0;
 
     const startIndex = ref<number>(0);
     const endIndex = ref<number>(0);
@@ -55,7 +55,7 @@ export default {
       animationId,
       framesPerMove,
       pixelsPerMove,
-      delayTime,
+      delayTimeId,
 
       startIndex,
       endIndex,
@@ -77,19 +77,19 @@ export default {
     },
     WheelEvent() {
       cancelAnimationFrame(this.animationId);
-      clearTimeout(this.delayTime);
-      this.delayTime = setTimeout(() => {
+      clearTimeout(this.delayTimeId);
+      this.delayTimeId = setTimeout(() => {
         this.autoScroll();
       }, 500);
     },
     mouseDownEvent(event: MouseEvent) {
       if (event.target === this.container_dom) {
         cancelAnimationFrame(this.animationId);
-        clearTimeout(this.delayTime);
+        clearTimeout(this.delayTimeId);
       }
     },
     mouseupEvent() {
-      this.delayTime = setTimeout(() => {
+      this.delayTimeId = setTimeout(() => {
         this.autoScroll();
       }, 500);
     },
@@ -118,7 +118,7 @@ export default {
           if (isScrollBottom()) {
             cancelAnimationFrame(this.animationId);
             this.container_dom.scrollTo(0, 0);
-            this.delayTime = setTimeout(() => {
+            this.delayTimeId = setTimeout(() => {
               scroll();
             }, 500);
           }
@@ -161,7 +161,7 @@ export default {
 
   beforeUnmount() {
     cancelAnimationFrame(this.animationId);
-    clearTimeout(this.delayTime);
+    clearTimeout(this.delayTimeId);
   }
 };
 </script>
