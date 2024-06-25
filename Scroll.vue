@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div ref="container_dom" class="scroll-container" @scroll="scrollEvent" @click="clickEvent">
+    <div ref="container_dom" class="scroll-container" @scroll="scrollEvent" @click="clickEvent" @wheel="WheelEvent"
+      @mousedown="mouseDownEvent" @mouseup="mouseupEvent">
       <div class="scroll-phantom"></div>
       <div class="scroll-list">
-        <slot :visibleData="visibleData">
-        </slot>
+        <slot :visibleData="visibleData"></slot>
       </div>
     </div>
   </div>
@@ -27,11 +27,13 @@ export default {
   setup(props, context) {
     let datas = props.datas;
     let itemSize = props.itemSize;
+
     let screenSize: number = 0;
     let visibleCount: number = 0;
     let animationId: number = 0;
     let framesPerMove: number = 60;
     let pixelsPerMove: number = itemSize;
+    let delayTime: number = 0;
 
     const startIndex = ref<number>(0);
     const endIndex = ref<number>(0);
@@ -41,11 +43,14 @@ export default {
     return {
       datas,
       itemSize,
+
       screenSize,
       visibleCount,
       animationId,
       framesPerMove,
       pixelsPerMove,
+      delayTime,
+
       startIndex,
       endIndex,
       offsetY,
@@ -61,8 +66,26 @@ export default {
       this.endIndex = this.startIndex + this.visibleCount;
       this.offsetY = this.startIndex * this.itemSize;
     },
-    clickEvent(event: Event) {
+    clickEvent(event: MouseEvent) {
       this.context.emit('clickTarget', event);
+    },
+    WheelEvent() {
+      cancelAnimationFrame(this.animationId);
+      clearTimeout(this.delayTime);
+      this.delayTime = setTimeout(() => {
+        this.autoScroll();
+      }, 500);
+    },
+    mouseDownEvent(event: MouseEvent) {
+      if (event.target === this.container_dom) {
+        cancelAnimationFrame(this.animationId);
+        clearTimeout(this.delayTime);
+      }
+    },
+    mouseupEvent() {
+      this.delayTime = setTimeout(() => {
+        this.autoScroll();
+      }, 500);
     },
     autoScroll() {
       const isScrollBottom = () => {
@@ -85,10 +108,11 @@ export default {
         if (this.container_dom) {
           this.animationId = requestAnimationFrame(scroll);
           this.container_dom.scrollBy(0, scrollSpeed());
+
           if (isScrollBottom()) {
             cancelAnimationFrame(this.animationId);
             this.container_dom.scrollTo(0, 0);
-            setTimeout(() => {
+            this.delayTime = setTimeout(() => {
               scroll();
             }, 500);
           }
@@ -131,6 +155,7 @@ export default {
 
   beforeUnmount() {
     cancelAnimationFrame(this.animationId);
+    clearTimeout(this.delayTime);
   }
 };
 </script>
