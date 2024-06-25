@@ -63,8 +63,6 @@ export default {
     scrollEvent(event: Event) {
       const scrollTop = (event.target as HTMLElement).scrollTop;
       this.startIndex = Math.floor(scrollTop / this.itemSize);
-      console.log(this.startIndex);
-
       this.endIndex = this.startIndex + this.visibleCount;
       this.offsetY = this.startIndex * this.itemSize;
     },
