@@ -39,6 +39,7 @@ export default {
     let framesPerMove: number = 60;
     let pixelsPerMove: number = itemSize;
     let delayTimeId: number = 0;
+    let frame: number = 0;
 
     const startIndex = ref<number>(0);
     const endIndex = ref<number>(0);
@@ -61,7 +62,8 @@ export default {
       endIndex,
       offsetY,
       container_dom,
-      context
+      context,
+      frame,
     };
   },
 
@@ -88,10 +90,12 @@ export default {
         clearTimeout(this.delayTimeId);
       }
     },
-    mouseupEvent() {
-      this.delayTimeId = setTimeout(() => {
-        this.autoScroll();
-      }, 500);
+    mouseupEvent(event: MouseEvent) {
+      if (event.target === this.container_dom) {
+        this.delayTimeId = setTimeout(() => {
+          this.autoScroll();
+        }, 500);
+      }
     },
     autoScroll() {
       const isScrollBottom = () => {
