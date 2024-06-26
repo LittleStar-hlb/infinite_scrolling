@@ -39,7 +39,6 @@ export default {
     let framesPerMove: number = 60;
     let pixelsPerMove: number = itemSize;
     let delayTimeId: number = 0;
-    let frame: number = 0;
 
     const startIndex = ref<number>(0);
     const endIndex = ref<number>(0);
@@ -63,7 +62,6 @@ export default {
       offsetY,
       container_dom,
       context,
-      frame,
     };
   },
 
