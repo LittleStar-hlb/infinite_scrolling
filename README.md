@@ -18,7 +18,7 @@ export default {
     return {}
   },
   methods: {
-    clickTarget(wvwnt: MouseEvent) {
+    clickTarget(event: MouseEvent) {
       ...
     },
   },
